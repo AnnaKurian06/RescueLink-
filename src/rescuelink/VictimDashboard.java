@@ -4,35 +4,37 @@ import javax.swing.*;
 import java.awt.*;
 
 public class VictimDashboard extends JFrame {
-
     private final Victim victim;
 
     public VictimDashboard(Victim victim) {
         this.victim = victim;
 
         setTitle("Victim Dashboard - " + victim.getName());
-        setSize(600, 400);
+        setSize(400, 250);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        // Buttons
-        JButton viewAlerts = new JButton("View My Alerts");
-        JButton viewAssignments = new JButton("View My Assignments");
+        // Title / Welcome panel
+        JLabel welcomeLabel = new JLabel("Welcome, " + victim.getName() + "!", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+        add(welcomeLabel, BorderLayout.NORTH);
 
-        JPanel panel = new JPanel();
-        panel.add(viewAlerts);
-        panel.add(viewAssignments);
-        add(panel, BorderLayout.CENTER);
+        // Center buttons panel
+        JPanel centerPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
-        viewAlerts.addActionListener(e -> {
-            VictimAlerts alertsPanel = new VictimAlerts(victim);
-            alertsPanel.setVisible(true);
+        JButton viewAlertsBtn = new JButton("📢 View My Alerts");
+        viewAlertsBtn.addActionListener(e -> new VictimAlerts(victim).setVisible(true));
+
+        JButton logoutBtn = new JButton("🚪 Logout");
+        logoutBtn.addActionListener(e -> {
+            dispose();
+            new Login().setVisible(true);
         });
 
-        viewAssignments.addActionListener(e -> {
-            VictimAssignments assignmentsPanel = new VictimAssignments(victim);
-            assignmentsPanel.setVisible(true);
-        });
+        centerPanel.add(viewAlertsBtn);
+        centerPanel.add(logoutBtn);
+
+        add(centerPanel, BorderLayout.CENTER);
     }
 }
