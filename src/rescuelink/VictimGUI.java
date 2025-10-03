@@ -8,7 +8,6 @@ public class VictimGUI extends JFrame {
 
     private final JTextField nameField;
     private final JTextField locationField;
-
     private final JTextField conditionField;
     private final JTextField peopleField;
     private final JComboBox<String> incidentCombo;
@@ -18,14 +17,17 @@ public class VictimGUI extends JFrame {
     private final JButton alertsButton;
 
     private final VictimModule vm;
+    private final String phoneNo; // Phone number passed from login
     private Victim lastReportedVictim; // store latest victim for alerts
 
-    public VictimGUI() throws SQLException {
-        vm = new VictimModule();
+    // ✅ Constructor takes phone number
+    public VictimGUI(String phoneNo, VictimModule vm) {
+        this.vm = vm;
+        this.phoneNo = phoneNo;
 
-        setTitle("Report Victim Incident");
+        setTitle("Victim Registration / Report Incident");
         setSize(900, 350);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -47,12 +49,11 @@ public class VictimGUI extends JFrame {
         conditionField = new JTextField();
         incidentCombo = new JComboBox<>(new String[]{
                 "Flood", "Fire", "Accident", "Landslide", "Earthquake",
-                "Building Collapse", "Cyclone", "Tsunami", "Other"
+                "Building Collapse", "Cyclone", "Medical Emergency", "Other"
         });
         severityCombo = new JComboBox<>(new String[]{"Mild", "Moderate", "Severe"});
         peopleField = new JTextField();
 
-        // Status is not editable, always defaults to "Pending"
         JTextField statusField = new JTextField("Pending");
         statusField.setEditable(false);
 
@@ -69,7 +70,7 @@ public class VictimGUI extends JFrame {
         // Bottom Panel
         JPanel bottomPanel = new JPanel();
         immediateCheck = new JCheckBox("Immediate Rescue");
-        reportButton = new JButton("Report Incident");
+        reportButton = new JButton("Register / Report Incident");
         alertsButton = new JButton("View My Alerts");
 
         bottomPanel.add(immediateCheck);
@@ -77,7 +78,7 @@ public class VictimGUI extends JFrame {
         bottomPanel.add(alertsButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // Button Actions
+        // Button actions
         reportButton.addActionListener(e -> reportIncident());
         alertsButton.addActionListener(e -> openAlerts());
     }
@@ -104,26 +105,24 @@ public class VictimGUI extends JFrame {
 
         boolean immediate = immediateCheck.isSelected();
 
-        // Default status = "Pending"
-        String status = "Pending";
-
-        // ✅ Create victim with actual form values
+        // ✅ Use phoneNo from constructor
         Victim v = new Victim(
-                0,              // victim_id (auto-increment, so pass 0 or ignore in DAO)
+                0,             // victim_id (auto-increment)
                 name,
+                phoneNo,       // ✅ assign phone_no here
                 location,
                 condition,
                 incident,
                 severity,
                 peopleAffected,
                 immediate,
-                status
+                "Pending"      // status
         );
 
         vm.addVictim(v);
-        lastReportedVictim = v; // save for alerts panel
+        lastReportedVictim = v;
 
-        JOptionPane.showMessageDialog(this, "Incident reported successfully!");
+        JOptionPane.showMessageDialog(this, "Victim registered / incident reported successfully!");
         clearFields();
     }
 
@@ -144,15 +143,5 @@ public class VictimGUI extends JFrame {
         }
         VictimAlerts alertsPanel = new VictimAlerts(lastReportedVictim);
         alertsPanel.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                new VictimGUI().setVisible(true);
-            } catch (SQLException ex) {
-                System.getLogger(VictimGUI.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-            }
-        });
     }
 }
