@@ -53,6 +53,9 @@ public class VictimAlerts extends JFrame {
     private void loadAlerts() {
         alertModel.setRowCount(0);
         List<Alert> alerts = alertDAO.getAlertsForUser(victim);
+        if (alerts.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No alerts yet!");
+        }
 
         for (Alert a : alerts) {
             alertModel.addRow(new Object[]{
