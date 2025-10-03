@@ -61,6 +61,30 @@ public class VictimModule {
             return false;
         }
     }
+    public Victim getVictimByPhone(String phone) {
+    String sql = "SELECT * FROM victims WHERE phone = ?";
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, phone);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return new Victim(
+                rs.getInt("victim_id"),
+                rs.getString("name"),
+                rs.getString("location"),
+                rs.getString("condition"),
+                rs.getString("incident_type"),
+                rs.getString("severity"),
+                rs.getInt("people_affected"),
+                rs.getBoolean("immediate_rescue"),
+                rs.getString("status"),
+                rs.getString("phone")
+            );
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 
     // Fetch all victims
     public List<Victim> getAllVictims() {
