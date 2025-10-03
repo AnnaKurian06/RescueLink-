@@ -38,7 +38,7 @@ public class StartPage extends JFrame {
         // Actions
         victimBtn.addActionListener(e -> {
             try {
-                new VictimGUI().setVisible(true);
+                new VictimLogin().setVisible(true);
             } catch (SQLException ex) {
                 System.getLogger(StartPage.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             }
@@ -46,13 +46,13 @@ public class StartPage extends JFrame {
         });
 
         volunteerBtn.addActionListener(e -> {
-    new VolunteerForm().setVisible(true);
+    new VolunteerDashboard().setVisible(true);
     dispose(); // closes StartPage window if you want
 });
 
 
         adminBtn.addActionListener(e -> {
-            new AdminDashboard().setVisible(true);
+            new AdminLogin().setVisible(true);
             dispose();
         });
     }
