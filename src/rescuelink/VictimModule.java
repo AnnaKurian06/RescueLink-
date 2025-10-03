@@ -90,6 +90,30 @@ public class VictimModule {
         }
         return victims;
     }
+public Victim getVictimById(int victimId) {
+    String sql = "SELECT * FROM victims WHERE victim_id = ?";
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, victimId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return new Victim(
+                rs.getInt("victim_id"),
+                rs.getString("name"),
+                rs.getString("location"),
+                rs.getString("condition"),
+                rs.getString("incident_type"),
+                rs.getString("severity"),
+                rs.getInt("people_affected"),
+                rs.getBoolean("immediate_rescue"),
+                rs.getString("status"),
+                rs.getString("phone")
+            );
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null; // Not found
+}
 
     // Close the connection when module is no longer needed
     public void closeConnection() {
