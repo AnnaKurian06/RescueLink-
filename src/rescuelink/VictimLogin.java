@@ -50,25 +50,21 @@ public class VictimLogin extends JFrame {
         Victim victim = vm.getVictimByPhone(phone);
 
         if (victim == null) {
-            // First-time login → create a new Victim object
-            victim = new Victim(
-                    0, // ID will be auto-generated in DB
-                    "", // Name will be updated later
-                    "", // Location
-                    "", // Condition
-                    "", // Incident Type
-                    "", // Severity
-                    0,  // People Affected
-                    false, // Immediate Rescue
-                    "Pending", // Status
-                    phone // Phone number
-            );
-            JOptionPane.showMessageDialog(this, "First-time login detected. Proceed to dashboard to fill details.");
+            // First-time login → open registration GUI
+            JOptionPane.showMessageDialog(this, "First-time login detected. Please fill your details.");
+            try {
+                VictimGUI registrationGUI = new VictimGUI(phone, vm); // pass phone & module
+                registrationGUI.setVisible(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error opening registration form.");
+            }
+        } else {
+            // Existing victim → open dashboard
+            VictimDashboard dashboard = new VictimDashboard(victim);
+            dashboard.setVisible(true);
         }
 
-        // Open Victim Dashboard
-        VictimDashboard dashboard = new VictimDashboard(victim);
-        dashboard.setVisible(true);
         this.dispose(); // Close login window
     }
 
@@ -82,3 +78,4 @@ public class VictimLogin extends JFrame {
         });
     }
 }
+
