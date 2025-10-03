@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class VictimLogin extends JFrame {
 
-    private final JTextField idField;
+    private final JTextField phoneField;
     private final JButton loginButton;
     private final VictimModule vm;
 
@@ -24,40 +24,46 @@ public class VictimLogin extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(new JLabel("Enter Victim ID:"), gbc);
+        add(new JLabel("Enter Phone Number:"), gbc);
 
         gbc.gridx = 1;
-        idField = new JTextField(15);
-        add(idField, gbc);
+        phoneField = new JTextField(15);
+        add(phoneField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2;
-        loginButton = new JButton("Login");
+        loginButton = new JButton("Login / Register");
         add(loginButton, gbc);
 
         loginButton.addActionListener(e -> login());
     }
 
     private void login() {
-        String idText = idField.getText().trim();
-        if (idText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter Victim ID.");
+        String phone = phoneField.getText().trim();
+        if (phone.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter Phone Number.");
             return;
         }
 
-        int victimId;
-        try {
-            victimId = Integer.parseInt(idText);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Enter a valid numeric ID.");
-            return;
-        }
+        // Check if victim exists
+        Victim victim = vm.getVictimByPhone(phone);
 
-        Victim victim = vm.getVictimById(victimId);
         if (victim == null) {
-            JOptionPane.showMessageDialog(this, "Victim ID not found!");
-            return;
+            // First-time login → create a new Victim object
+            victim = new Victim(
+                    0, // ID will be auto-generated in DB
+                    "", // Name will be updated later
+                    "", // Location
+                    "", // Condition
+                    "", // Incident Type
+                    "", // Severity
+                    0,  // People Affected
+                    false, // Immediate Rescue
+                    "Pending", // Status
+                    phone // Phone number
+            );
+            JOptionPane.showMessageDialog(this, "First-time login detected. Proceed to dashboard to fill details.");
         }
 
         // Open Victim Dashboard
